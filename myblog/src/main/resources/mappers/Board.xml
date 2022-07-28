@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.myblog.dao.BoardDao">
+
+    <select id="findAll"
+            parameterType="com.example.myblog.paging.Criteria"
+            resultType="com.example.myblog.model.Board">
+        SELECT *
+        FROM (
+                 SELECT
+                     ROWNUM R, TT.*
+                 FROM TB_BOARD TT
+                 WHERE DELETE_YN = 'N'
+                   AND ROWNUM &lt;= (#{page} + 1) * #{size}
+             )
+        WHERE R > #{page} * #{size}
+    </select>
+
+
+    <select id="findByTitleContaining"
+            parameterType="com.example.myblog.paging.Criteria"
+            resultType="com.example.myblog.model.Board">
+        SELECT *
+        FROM (
+                 SELECT
+                     ROWNUM R, TT.*
+                 FROM TB_BOARD TT
+                 WHERE DELETE_YN = 'N'
+                   AND TITLE LIKE '%' || #{title} || '%'
+                   AND ROWNUM &lt;= (#{page} + 1) * #{size}
+             )
+        WHERE R > #{page} * #{size}
+    </select>
+
+    <select id="selectTotalCount"
+            parameterType="String"
+            resultType="int">
+        SELECT
+            COUNT(*)
+        FROM TB_BOARD
+        WHERE DELETE_YN = 'N'
+          AND TITLE LIKE '%'|| #{title} ||'%'
+    </select>
+
+    <select id="findById" parameterType="long"
+            resultType="com.example.myblog.model.Board">
+        SELECT
+            IDX,
+            TITLE,
+            CONTENT,
+            WRITER,
+            SECRET_YN,
+            DELETE_YN,
+            INSERT_TIME,
+            UPDATE_TIME,
+            DELETE_TIME
+        FROM TB_BOARD
+        WHERE DELETE_YN = 'N'
+        AND   IDX = #{idx}
+    </select>
+
+    <insert id="insertBoard"
+            parameterType="com.example.myblog.model.Board">
+        INSERT INTO TB_BOARD(
+        IDX
+        ,TITLE
+        ,CONTENT
+        ,WRITER
+        ,INSERT_TIME
+        ) VALUES (
+        SQ_TB_BOARD.NEXTVAL
+        ,#{title}
+        ,#{content}
+        ,#{writer}
+        ,SYSDATE
+        )
+
+        <selectKey keyProperty="idx" resultType="long" order="AFTER">
+            SELECT SQ_TB_BOARD.CURRVAL FROM DUAL
+        </selectKey>
+
+    </insert>
+
+    <update id="updateBoard"
+            parameterType="com.example.myblog.model.Board">
+        UPDATE TB_BOARD
+        SET
+           TITLE = #{title}
+          ,CONTENT = #{content}
+          ,WRITER = #{writer}
+          ,UPDATE_TIME = SYSDATE
+        WHERE
+            IDX = #{idx}
+    </update>
+
+    <update id="deleteBoard" parameterType="long">
+        UPDATE TB_BOARD
+        SET
+            DELETE_YN = 'Y'
+           ,DELETE_TIME = SYSDATE
+        WHERE
+            IDX = #{idx}
+    </update>
+
+    <update id="deleteAll">
+        UPDATE TB_BOARD
+        SET
+            DELETE_YN = 'Y'
+           ,DELETE_TIME = SYSDATE
+    </update>
+
+</mapper>
+
+
+
+
+
+
+
+
