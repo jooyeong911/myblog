@@ -2,7 +2,7 @@
 myblog는 개인 블로그 구축 세미 프로젝트입니다.
 총 5개의 게시판으로 구성, 모든 게시판은 글쓰기가 가능하고 게시물들은 수정 삭제가 가능합니다.
 
-#사용 기술
+## ⭐️사용 기술
 Vue, JQuery, HTML/CSS, SpringBoot, Java, Mybatis, Oracle Cloud DB
 
 ## ⭐️주요 기능
